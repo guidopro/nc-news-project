@@ -34,3 +34,45 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id", () => {
+  test("should respond with requested article", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toHaveProperty("article_id", 1);
+        expect(article).toHaveProperty(
+          "body",
+          "I find this existence challenging"
+        );
+        expect(article).toHaveProperty(
+          "body",
+          "I find this existence challenging"
+        );
+        expect(article).toHaveProperty("author", "butter_bridge");
+        expect(article).toHaveProperty(
+          "title",
+          "Living in the shadow of a great man"
+        );
+        expect(article).toHaveProperty("topic", "mitch");
+        expect(article).toHaveProperty(
+          "created_at",
+          "2020-07-09T20:11:00.000Z"
+        );
+        expect(article).toHaveProperty("votes", 100);
+        expect(article).toHaveProperty(
+          "article_img_url",
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("should respond with a status 404 when article id is not listed on the db", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+});

@@ -1,6 +1,6 @@
-const { selectAllTopics } = require("../models/models");
+const { selectAllTopics, selectArticleById } = require("../models/models");
 
-function getAllTopics(req, res) {
+function getAllTopics(req, res, next) {
   selectAllTopics()
     .then((topics) => {
       return res.status(200).send({ topics: topics });
@@ -10,4 +10,18 @@ function getAllTopics(req, res) {
     });
 }
 
-module.exports = { getAllTopics };
+function getArticleById(req, res, next) {
+  const id = req.params.article_id;
+
+  selectArticleById(id)
+    .then((article) => {
+      return res.status(200).send({ article: article });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      next(err);
+    });
+}
+
+module.exports = { getAllTopics, getArticleById };

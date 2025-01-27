@@ -1,13 +1,24 @@
 const express = require("express");
 const app = express();
 const endpointsJson = require("../endpoints.json");
-const { getAllTopics } = require("./controllers/controllers");
+const { getAllTopics, getArticleById } = require("./controllers/controllers");
 
 app.get("/api", (req, res) => {
   res.status(200).send({ endpoints: endpointsJson });
 });
 
 app.get("/api/topics", getAllTopics);
+app.get("/api/articles/:article_id", getArticleById);
+
+app.use((err, req, res, next) => {
+  if (err === "article does not exist") {
+    res.status(404).send({ msg: "article does not exist" });
+  } else next(err);
+});
+
+app.all("*", (req, res) => {
+  res.status(404).send({ error: "Endpoint not found" });
+});
 
 app.use((err, req, res, next) => {
   console.log(err);
