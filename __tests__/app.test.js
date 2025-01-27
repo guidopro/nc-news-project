@@ -29,6 +29,8 @@ describe("GET /api/topics", () => {
           expect(topic).toHaveProperty("slug");
           expect(topic).toHaveProperty("description");
         });
+        expect(topics).toEqual(testData.topicData);
+        // not sure if this is a good assertion as it will fail when the db changes
       });
   });
 });
