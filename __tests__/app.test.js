@@ -38,7 +38,7 @@ describe("GET /api/topics", () => {
 describe("GET /api/articles/:article_id", () => {
   test("should respond with requested article", () => {
     return request(app)
-      .get("/api/article/1")
+      .get("/api/articles/1")
       .expect(200)
       .then(({ body: { article } }) => {
         expect(article).toHaveProperty("article_id", 1);
@@ -56,7 +56,10 @@ describe("GET /api/articles/:article_id", () => {
           "Living in the shadow of a great man"
         );
         expect(article).toHaveProperty("topic", "mitch");
-        expect(article).toHaveProperty("created_at", "2020-07-09 21:11:00");
+        expect(article).toHaveProperty(
+          "created_at",
+          "2020-07-09T20:11:00.000Z"
+        );
         expect(article).toHaveProperty("votes", 100);
         expect(article).toHaveProperty(
           "article_img_url",
