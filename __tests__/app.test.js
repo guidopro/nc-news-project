@@ -76,3 +76,14 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("GET /api/articles", () => {
+  test("should return all the articles from the db", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: articles }) => {
+        expect(articles.length).toBe(13);
+      });
+  });
+});
