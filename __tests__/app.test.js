@@ -67,4 +67,12 @@ describe("GET /api/articles/:article_id", () => {
         );
       });
   });
+  test("should respond with a status 404 when article id is not listed on the db", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
 });
