@@ -35,7 +35,7 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe.skip("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
   test("should respond with requested article", () => {
     return request(app)
       .get("/api/articles/1")
