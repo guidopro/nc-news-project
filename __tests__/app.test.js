@@ -198,6 +198,10 @@ describe("POST /api/articles/:article_id/comments", () => {
       .then(({ body: { postedComment } }) => {
         expect(postedComment.body).toBe("Tra la la la Tra la la la. Tra la la");
         expect(postedComment.author).toBe("lurker");
+        expect(postedComment.article_id).toBe(2);
+        expect(postedComment).toHaveProperty("comment_id");
+        expect(postedComment).toHaveProperty("votes");
+        expect(postedComment).toHaveProperty("created_at");
       });
   });
 });

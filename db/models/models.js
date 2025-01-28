@@ -43,8 +43,6 @@ function selectCommentsByArticleId(id) {
 }
 
 function insertIntoCommentsByArticleId(id, { username, body }) {
-  console.log(username, body);
-
   return db
     .query(
       `INSERT INTO comments (body, article_id, author)

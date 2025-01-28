@@ -54,8 +54,6 @@ function postCommentByArticleId(req, res, next) {
   const newCommentObj = req.body;
   insertIntoCommentsByArticleId(id, newCommentObj)
     .then((postedComment) => {
-    //   console.log(postedComment);
-
       return res.status(201).send({ postedComment: postedComment });
     })
     .catch((err) => {
