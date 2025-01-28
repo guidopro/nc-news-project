@@ -184,3 +184,26 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe.skip("POST /api/articles/:article_id/comments", () => {
+  test("201 should insert a new comment to the db and send it back to client ", () => {
+    const newComment = {
+      username: "lurker",
+      body: "Tra la la la Tra la la la. Tra la la",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: postedComment }) => {
+        expect(Object.keys(postedComment)).toEqual([
+          "comment_id",
+          "body",
+          "votes",
+          "author",
+          "article_id",
+          "created_at",
+        ]);
+      });
+  });
+});
