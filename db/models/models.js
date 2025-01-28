@@ -17,9 +17,13 @@ function selectArticleById(id) {
 }
 
 function selectAllArticles() {
-  return db.query("SELECT * FROM articles").then((result) => {
-    return result.rows;
-  });
+  return db
+    .query(
+      "SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles"
+    )
+    .then((result) => {
+      return result.rows;
+    });
 }
 
 module.exports = { selectAllTopics, selectArticleById, selectAllArticles };

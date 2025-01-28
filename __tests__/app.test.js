@@ -113,4 +113,14 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("should be sorted in descending order by data", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
 });
