@@ -19,7 +19,7 @@ function selectArticleById(id) {
 function selectAllArticles() {
   return db
     .query(
-      "SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles"
+      "SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC"
     )
     .then((result) => {
       return result.rows;
