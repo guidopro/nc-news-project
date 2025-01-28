@@ -75,6 +75,14 @@ describe("GET /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("article does not exist");
       });
   });
+  test("should respond with a status 400 when given client error ie when article_id is not a number", () => {
+    return request(app)
+      .get("/api/articles/football")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("GET /api/articles", () => {

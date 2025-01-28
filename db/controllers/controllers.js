@@ -32,8 +32,6 @@ function getAllArticles(req, res, next) {
       return res.status(200).send({ articles: articles });
     })
     .catch((err) => {
-      console.log(err);
-
       next(err);
     });
 }
