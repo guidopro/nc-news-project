@@ -148,12 +148,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body: { comments } }) => {
         comments.forEach((comment) => {
-          expect(comment).toHaveProperty(comment_id);
-          expect(comment).toHaveProperty(votes);
-          expect(comment).toHaveProperty(created_at);
-          expect(comment).toHaveProperty(author);
-          expect(comment).toHaveProperty(body);
-          expect(comment).toHaveProperty(article_id);
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("article_id");
         });
       });
   });

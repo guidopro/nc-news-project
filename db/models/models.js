@@ -29,4 +29,20 @@ function selectAllArticles() {
     });
 }
 
-module.exports = { selectAllTopics, selectArticleById, selectAllArticles };
+function selectCommentsByArticleId(id) {
+  return db
+    .query(
+      `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`,
+      [id]
+    )
+    .then((result) => {
+      return result.rows;
+    });
+}
+
+module.exports = {
+  selectAllTopics,
+  selectArticleById,
+  selectAllArticles,
+  selectCommentsByArticleId,
+};
