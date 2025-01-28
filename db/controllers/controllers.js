@@ -3,6 +3,7 @@ const {
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
+  insertIntoCommentsByArticleId,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -48,9 +49,24 @@ function getCommentsByArticleId(req, res, next) {
     });
 }
 
+function postCommentByArticleId(req, res, next) {
+  const id = req.params.article_id;
+  const newCommentObj = req.body;
+  insertIntoCommentsByArticleId(id, newCommentObj)
+    .then((postedComment) => {
+    //   console.log(postedComment);
+
+      return res.status(201).send({ postedComment: postedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
   getAllArticles,
   getCommentsByArticleId,
+  postCommentByArticleId,
 };

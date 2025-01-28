@@ -42,9 +42,25 @@ function selectCommentsByArticleId(id) {
     });
 }
 
+function insertIntoCommentsByArticleId(id, { username, body }) {
+  console.log(username, body);
+
+  return db
+    .query(
+      `INSERT INTO comments (body, article_id, author)
+    VALUES ($1, $2, $3)
+    RETURNING *`,
+      [body, id, username]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
 module.exports = {
   selectAllTopics,
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
+  insertIntoCommentsByArticleId,
 };
