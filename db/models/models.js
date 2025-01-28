@@ -16,4 +16,10 @@ function selectArticleById(id) {
     });
 }
 
-module.exports = { selectAllTopics, selectArticleById };
+function selectAllArticles() {
+  return db.query("SELECT * FROM articles").then((result) => {
+    return result.rows;
+  });
+}
+
+module.exports = { selectAllTopics, selectArticleById, selectAllArticles };
