@@ -2,6 +2,7 @@ const {
   selectAllTopics,
   selectArticleById,
   selectAllArticles,
+  selectCommentsByArticleId,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -36,4 +37,20 @@ function getAllArticles(req, res, next) {
     });
 }
 
-module.exports = { getAllTopics, getArticleById, getAllArticles };
+function getCommentsByArticleId(req, res, next) {
+  const id = req.params.article_id;
+  selectCommentsByArticleId(id)
+    .then((comments) => {
+      return res.status(200).send({ comments: comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = {
+  getAllTopics,
+  getArticleById,
+  getAllArticles,
+  getCommentsByArticleId,
+};
