@@ -167,4 +167,20 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
+  test("should respond with a status 400 when given client error ie when article_id is not a number", () => {
+    return request(app)
+      .get("/api/articles/basketball/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("should respond with a status 404 when article id is not listed on the db", () => {
+    return request(app)
+      .get("/api/articles/4357953/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
 });

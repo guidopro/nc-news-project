@@ -36,7 +36,9 @@ function selectCommentsByArticleId(id) {
       [id]
     )
     .then((result) => {
-      return result.rows;
+      if (result.rows.length === 0) {
+        return Promise.reject("article does not exist");
+      } else return result.rows;
     });
 }
 
