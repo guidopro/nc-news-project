@@ -1,6 +1,6 @@
-const endpointsJson = require("../endpoints.json");
 const request = require("supertest");
 const app = require("../db/app");
+const endpointsJson = require("../endpoints.json");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
@@ -84,6 +84,33 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles.length).toBe(13);
+      });
+  });
+  test("objects should all have author, title, article_id, topic, created_at, votes, article_img_url, comment_count properties,", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
+        });
+      });
+  });
+  test("all objects should not have body property", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+        });
       });
   });
 });

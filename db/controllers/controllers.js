@@ -22,8 +22,6 @@ function getArticleById(req, res, next) {
       return res.status(200).send({ article: article });
     })
     .catch((err) => {
-      console.log(err);
-
       next(err);
     });
 }
