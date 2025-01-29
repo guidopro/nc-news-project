@@ -407,4 +407,12 @@ describe("CORE: GET /api/articles (sorting queries)", () => {
         expect(articles).toBeSortedBy("article_id", { ascending: true });
       });
   });
+  test("404 should send error if column to sort_by does not exist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=column-does-not-exist?order=asc")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Column not found");
+      });
+  });
 });
