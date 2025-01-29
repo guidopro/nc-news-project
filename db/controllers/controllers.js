@@ -5,6 +5,7 @@ const {
   selectCommentsByArticleId,
   insertIntoCommentsByArticleId,
   patchArticleById,
+  deleteCommentById,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -74,6 +75,17 @@ function patchArticle(req, res, next) {
     });
 }
 
+function deleteComment(req, res, next) {
+  const commentId = req.params.comment_id;
+  deleteCommentById(commentId)
+    .then(() => {
+      return res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
@@ -81,4 +93,5 @@ module.exports = {
   getCommentsByArticleId,
   postCommentByArticleId,
   patchArticle,
+  deleteComment,
 };

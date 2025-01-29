@@ -72,6 +72,20 @@ function patchArticleById(id, { inc_votes }) {
     });
 }
 
+function deleteCommentById(commentId) {
+  return db
+    .query(
+      `DELETE FROM comments
+        WHERE comment_id = $1`,
+      [commentId]
+    )
+    .then(({ rowCount }) => {
+      if (!rowCount) {
+        return Promise.reject("Article does not exist");
+      }
+    });
+}
+
 module.exports = {
   selectAllTopics,
   selectArticleById,
@@ -79,4 +93,5 @@ module.exports = {
   selectCommentsByArticleId,
   insertIntoCommentsByArticleId,
   patchArticleById,
+  deleteCommentById,
 };

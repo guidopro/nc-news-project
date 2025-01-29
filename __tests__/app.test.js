@@ -345,7 +345,7 @@ describe("PATCH /api/articles/:article_id", () => {
 
 describe("DELETE /api/comments/:comment_id", () => {
   test("204 should delete given comment", () => {
-    return request(app).delete("/api/comments/1").expect(204);
+    return request(app).delete("/api/comments/8").expect(204);
   });
   test("400 responds with error message when given invalid id", () => {
     return request(app)
