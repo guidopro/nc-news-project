@@ -65,6 +65,9 @@ function patchArticleById(id, { inc_votes }) {
       [inc_votes, id]
     )
     .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject("Article does not exist");
+      }
       return rows[0];
     });
 }

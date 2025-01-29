@@ -305,4 +305,42 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
+  test("400 sends an error message when given bad data", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ bad_data: null })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 sends an error message when given wrong data type ", () => {
+    return (
+      request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: ["100"] })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        })
+    );
+  });
+  test("404 sends an error message when article_id does not exist", () => {
+    return request(app)
+      .patch("/api/articles/5353")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article does not exist");
+      });
+  });
+  test("404 sends an error message when article_id is too big a datatype for SQL to handle", () => {
+    return request(app)
+      .patch("/api/articles/535334587345983479")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article does not exist");
+      });
+  });
 });

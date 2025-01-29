@@ -34,7 +34,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err === "Article does not exist") {
+  if (err === "Article does not exist" || err.code === "22003") {
     res.status(404).send({ msg: "Article does not exist" });
   } else if (err.code === "23503" && err.detail.includes("article_id")) {
     res.status(404).send({ msg: "Article does not exist" });
