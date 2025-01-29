@@ -278,4 +278,31 @@ describe("PATCH /api/articles/:article_id", () => {
         );
       });
   });
+  test("should increment votes when votes does not already equal zero", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 153 })
+      .expect(200)
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle.votes).toBe(253);
+      });
+  });
+  test("should decrement votes when votes does not already equal zero", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -50 })
+      .expect(200)
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle.votes).toBe(50);
+      });
+  });
+  test("400 sends an error message when given an invalid id", () => {
+    return request(app)
+      .patch("/api/articles/not-a-valid-id")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
 });
