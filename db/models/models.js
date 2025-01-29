@@ -1,4 +1,5 @@
 const db = require("../connection");
+const format = require("pg-format");
 
 function selectAllTopics() {
   return db.query("SELECT * FROM topics").then((result) => {
@@ -28,33 +29,23 @@ function selectAllArticles(queries) {
   let args = [];
 
   if (sort_by) {
-    SQLString += ` ORDER BY $1`;
+    SQLString += ` ORDER BY %I`;
     args.push(sort_by);
   } else {
     SQLString += ` ORDER BY articles.created_at`;
   }
 
   if (order) {
-    SQLString += ` $2`;
+    SQLString += ` %s`;
     args.push(order);
   } else {
     SQLString += ` DESC`;
   }
+  const queryStr = format(SQLString, sort_by, order);
 
-  return db.query(SQLString, args).then(({ rows }) => {
+  return db.query(queryStr).then(({ rows }) => {
     return rows;
   });
-
-  //   return db
-  //     .query(
-  //       `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
-  //         LEFT JOIN comments ON articles.article_id = comments.article_id
-  //         GROUP BY articles.article_id
-  //         ORDER BY articles.created_at DESC`
-  //     )
-  //     .then((result) => {
-  //       return result.rows;
-  //     });
 }
 
 function selectCommentsByArticleId(id) {

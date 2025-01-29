@@ -32,7 +32,7 @@ function getArticleById(req, res, next) {
 }
 
 function getAllArticles(req, res, next) {
-  const queries = req.query
+  const queries = req.query;
 
   selectAllArticles(queries)
     .then((articles) => {
