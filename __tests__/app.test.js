@@ -121,7 +121,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should be sorted in descending order by data", () => {
+  test("should be sorted in descending order by date", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -384,6 +384,17 @@ describe("CORE: GET /api/users", () => {
           expect(user).toHaveProperty("name");
           expect(user).toHaveProperty("avatar_url");
         });
+      });
+  });
+});
+
+describe("CORE: GET /api/articles (sorting queries)", () => {
+  test("should accept a sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("votes");
       });
   });
 });
