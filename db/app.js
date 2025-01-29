@@ -4,6 +4,7 @@ const {
   getAllArticles,
   getCommentsByArticleId,
   postCommentByArticleId,
+  patchArticle,
 } = require("./controllers/controllers");
 const express = require("express");
 const endpointsJson = require("../endpoints.json");
@@ -18,6 +19,7 @@ app.get("/api", (req, res) => {
 app.get("/api/topics", getAllTopics);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
+app.patch("/api/articles/:article_id", patchArticle);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
@@ -32,7 +34,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err === "Article does not exist") {
+  if (err === "Article does not exist" || err.code === "22003") {
     res.status(404).send({ msg: "Article does not exist" });
   } else if (err.code === "23503" && err.detail.includes("article_id")) {
     res.status(404).send({ msg: "Article does not exist" });

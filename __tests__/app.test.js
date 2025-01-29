@@ -75,9 +75,9 @@ describe("GET /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("Article does not exist");
       });
   });
-  test("should respond with a status 400 when given client error ie when article_id is not a number", () => {
+  test("responds with a status 400 when article_id is not a number", () => {
     return request(app)
-      .get("/api/articles/football")
+      .get("/api/articles/not-a-number")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
@@ -167,9 +167,9 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("should respond with a status 400 when given client error ie when article_id is not a number", () => {
+  test("responds with a status 400 when article_id is not a number", () => {
     return request(app)
-      .get("/api/articles/basketball/comments")
+      .get("/api/articles/not-a-number/comments")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
@@ -253,6 +253,94 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Username does not exist");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("should update an article by article_id and respond with the updated article", () => {
+    return request(app)
+      .patch("/api/articles/7")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle.votes).toBe(1);
+
+        expect(updatedArticle).toHaveProperty("article_id", 7);
+        expect(updatedArticle).toHaveProperty("body", "I was hungry.");
+        expect(updatedArticle).toHaveProperty("author", "icellusedkars");
+        expect(updatedArticle).toHaveProperty("title", "Z");
+        expect(updatedArticle).toHaveProperty("topic", "mitch");
+        expect(updatedArticle).toHaveProperty("created_at");
+        expect(updatedArticle).toHaveProperty(
+          "article_img_url",
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("should increment votes when votes does not already equal zero", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 153 })
+      .expect(200)
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle.votes).toBe(253);
+      });
+  });
+  test("should decrement votes when votes does not already equal zero", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -50 })
+      .expect(200)
+      .then(({ body: { updatedArticle } }) => {
+        expect(updatedArticle.votes).toBe(50);
+      });
+  });
+  test("400 sends an error message when given an invalid id", () => {
+    return request(app)
+      .patch("/api/articles/not-a-valid-id")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 sends an error message when given bad data", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ bad_data: null })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 sends an error message when given wrong data type ", () => {
+    return (
+      request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: ["100"] })
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad request");
+        })
+    );
+  });
+  test("404 sends an error message when article_id does not exist", () => {
+    return request(app)
+      .patch("/api/articles/5353")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article does not exist");
+      });
+  });
+  test("404 sends an error message when article_id is too big a datatype for SQL to handle", () => {
+    return request(app)
+      .patch("/api/articles/535334587345983479")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article does not exist");
       });
   });
 });
