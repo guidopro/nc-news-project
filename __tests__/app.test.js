@@ -364,3 +364,26 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("CORE: GET /api/users", () => {
+  test("should return an array of all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { allUsers } }) => {
+        expect(allUsers.length).toBe(4);
+      });
+  });
+  test("objects in returned array should all have username, name & avatar_url properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { allUsers } }) => {
+        allUsers.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+});
