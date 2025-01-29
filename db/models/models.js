@@ -11,7 +11,7 @@ function selectArticleById(id) {
     .query("SELECT * FROM articles WHERE article_id = $1", [id])
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject("article does not exist");
+        return Promise.reject("Article does not exist");
       } else return result.rows[0];
     });
 }
@@ -37,8 +37,21 @@ function selectCommentsByArticleId(id) {
     )
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject("article does not exist");
+        return Promise.reject("Article does not exist");
       } else return result.rows;
+    });
+}
+
+function insertIntoCommentsByArticleId(id, { username, body }) {
+  return db
+    .query(
+      `INSERT INTO comments (body, article_id, author)
+    VALUES ($1, $2, $3)
+    RETURNING *`,
+      [body, id, username]
+    )
+    .then(({ rows }) => {
+      return rows[0];
     });
 }
 
@@ -47,4 +60,5 @@ module.exports = {
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
+  insertIntoCommentsByArticleId,
 };
