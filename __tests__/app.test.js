@@ -72,7 +72,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/9999")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("article does not exist");
+        expect(response.body.msg).toBe("Article does not exist");
       });
   });
   test("should respond with a status 400 when given client error ie when article_id is not a number", () => {
@@ -180,7 +180,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/4357953/comments")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("article does not exist");
+        expect(response.body.msg).toBe("Article does not exist");
       });
   });
 });
@@ -202,6 +202,57 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(postedComment).toHaveProperty("comment_id");
         expect(postedComment).toHaveProperty("votes");
         expect(postedComment).toHaveProperty("created_at");
+      });
+  });
+  test("400 responds with an error message when provided with a bad request (does not contain username or body)", () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send({
+        wrongProperty: "gone wrong",
+      })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("400 sends an error message when given an invalid id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "nada",
+    };
+    return request(app)
+      .post("/api/articles/not-an-article-id/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("404 sends an appropriate status and error message when given a valid but non-existent id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "zero",
+    };
+    return request(app)
+      .post("/api/articles/4357953/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Article does not exist");
+      });
+  });
+  test("404 responds with an error message when provided with a username which does not exist", () => {
+    const newComment = {
+      username: "costa del sol",
+      body: "hang loose",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Username does not exist");
       });
   });
 });
