@@ -4,6 +4,7 @@ const {
   selectAllArticles,
   selectCommentsByArticleId,
   insertIntoCommentsByArticleId,
+  patchArticleById,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -61,10 +62,23 @@ function postCommentByArticleId(req, res, next) {
     });
 }
 
+function patchArticle(req, res, next) {
+  const id = req.params.article_id;
+  const newVote = req.body;
+  patchArticleById(id, newVote)
+    .then((updatedArticle) => {
+      return res.status(200).send({ updatedArticle: updatedArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
   getAllArticles,
   getCommentsByArticleId,
   postCommentByArticleId,
+  patchArticle,
 };
