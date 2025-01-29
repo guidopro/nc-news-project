@@ -16,17 +16,43 @@ function selectArticleById(id) {
     });
 }
 
-function selectAllArticles() {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
+function selectAllArticles(queries) {
+  const sort_by = queries.sort_by;
+  const order = queries.order;
+
+  let SQLString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id
-        ORDER BY articles.created_at DESC`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+        GROUP BY articles.article_id`;
+  let args = [];
+
+  if (sort_by) {
+    SQLString += ` ORDER BY $1`;
+    args.push(sort_by);
+  } else {
+    SQLString += ` ORDER BY articles.created_at`;
+  }
+
+  if (order) {
+    SQLString += ` $2`;
+    args.push(order);
+  } else {
+    SQLString += ` DESC`;
+  }
+
+  return db.query(SQLString, args).then(({ rows }) => {
+    return rows;
+  });
+
+  //   return db
+  //     .query(
+  //       `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
+  //         LEFT JOIN comments ON articles.article_id = comments.article_id
+  //         GROUP BY articles.article_id
+  //         ORDER BY articles.created_at DESC`
+  //     )
+  //     .then((result) => {
+  //       return result.rows;
+  //     });
 }
 
 function selectCommentsByArticleId(id) {

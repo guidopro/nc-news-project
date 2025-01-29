@@ -391,10 +391,20 @@ describe("CORE: GET /api/users", () => {
 describe("CORE: GET /api/articles (sorting queries)", () => {
   test("should accept a sort_by query", () => {
     return request(app)
-      .get("/api/articles?sort_by=votes")
+      .get("/api/articles?sort_by=article_id")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles).toBeSortedBy("votes");
+        console.log(articles);
+
+        expect(articles).toBeSortedBy("article_id");
+      });
+  });
+  test("should accept a sort_by and order query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("article_id", { ascending: true });
       });
   });
 });
