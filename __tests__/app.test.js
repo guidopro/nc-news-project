@@ -484,4 +484,12 @@ describe("GET /api/articles (topic query)", () => {
         expect(articles.length).toBe(1);
       });
   });
+  test("404 should respond with error when given an invalid value", () => {
+    return request(app)
+      .get("api/articles?topic=not-a-valid-value")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Input");
+      });
+  });
 });
