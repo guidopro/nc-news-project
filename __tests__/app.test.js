@@ -477,10 +477,10 @@ describe("GET /api/articles (sorting queries)", () => {
 
 describe("GET /api/articles (topic query)", () => {
   test("200 should respond with all articles that match the topic query", () => {
-    request(app)
+    return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
-      .then(({ body: articles }) => {
+      .then(({ body: { articles } }) => {
         expect(articles.length).toBe(1);
       });
   });

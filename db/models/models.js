@@ -20,6 +20,9 @@ function selectArticleById(id) {
 function selectAllArticles(queries) {
   const sort_by = queries.sort_by;
   const order = queries.order;
+  const topic = queries.topic;
+
+  const allowedTopicInputs = [];
 
   const allowedSortByInputs = [
     "article_id",
@@ -35,9 +38,14 @@ function selectAllArticles(queries) {
   const allowedOrderInputs = ["asc", "ASC", "desc", "DESC"];
 
   let SQLString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
-        LEFT JOIN comments ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id`;
+        LEFT JOIN comments ON articles.article_id = comments.article_id`;
   let args = [];
+
+  if (topic) {
+    SQLString += ` WHERE topic = $1`;
+    args.push(topic);
+  }
+  SQLString += ` GROUP BY articles.article_id`;
 
   if (!allowedSortByInputs.includes(sort_by) && sort_by !== undefined) {
     return Promise.reject({ status: 404, msg: "Invalid Input" });
@@ -45,7 +53,6 @@ function selectAllArticles(queries) {
 
   if (sort_by) {
     SQLString += ` ORDER BY %I`;
-    args.push(sort_by);
   } else {
     SQLString += ` ORDER BY articles.created_at`;
   }
@@ -56,13 +63,13 @@ function selectAllArticles(queries) {
 
   if (order) {
     SQLString += ` %s`;
-    args.push(order);
   } else {
     SQLString += ` DESC`;
   }
+
   const queryStr = format(SQLString, sort_by, order);
 
-  return db.query(queryStr).then(({ rows }) => {
+  return db.query(queryStr, args).then(({ rows }) => {
     return rows;
   });
 }
