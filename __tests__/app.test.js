@@ -475,7 +475,7 @@ describe("GET /api/articles (sorting queries)", () => {
   });
 });
 
-describe.only("GET /api/articles (topic query)", () => {
+describe("GET /api/articles (topic query)", () => {
   test("200 should respond with all articles that match the topic query", () => {
     return request(app)
       .get("/api/articles?topic=cats")
@@ -484,14 +484,20 @@ describe.only("GET /api/articles (topic query)", () => {
         expect(articles.length).toBe(1);
       });
   });
+  test("200 should respond with an empty array if topic exists but no rows exist with that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toEqual([]);
+      });
+  });
   test("404 should respond with error when given an invalid value", () => {
     return request(app)
       .get("/api/articles?topic=not-a-valid-value")
       .expect(404)
       .then(({ body: { msg } }) => {
-
-        
-        expect(msg).toBe("Resource not found");
+        expect(msg).toBe("Category not found");
       });
   });
 });

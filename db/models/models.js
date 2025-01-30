@@ -44,7 +44,9 @@ function selectAllArticles(queries) {
 
   console.log(topic);
 
-  checkExists("topics", "slug", topic);
+  if (topic) {
+    checkExists("topics", "slug", topic);
+  }
 
   if (topic) {
     SQLString += ` WHERE topic = $1`;
@@ -74,7 +76,11 @@ function selectAllArticles(queries) {
 
   const queryStr = format(SQLString, sort_by, order);
 
+  // console.log(queryStr);
+
   return db.query(queryStr, args).then(({ rows }) => {
+    // console.log(rows);
+
     return rows;
   });
 }
