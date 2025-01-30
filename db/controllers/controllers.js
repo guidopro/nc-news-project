@@ -32,7 +32,9 @@ function getArticleById(req, res, next) {
 }
 
 function getAllArticles(req, res, next) {
-  selectAllArticles()
+  const queries = req.query;
+
+  selectAllArticles(queries)
     .then((articles) => {
       return res.status(200).send({ articles: articles });
     })
