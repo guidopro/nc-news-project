@@ -1,5 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
+const checkExists = require("../../utils/utils");
 
 function selectAllTopics() {
   return db.query("SELECT * FROM topics").then((result) => {
@@ -40,6 +41,10 @@ function selectAllArticles(queries) {
   let SQLString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id`;
   let args = [];
+
+  console.log(topic);
+
+  checkExists("topics", "slug", topic);
 
   if (topic) {
     SQLString += ` WHERE topic = $1`;

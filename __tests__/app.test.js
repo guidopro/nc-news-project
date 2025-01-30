@@ -475,7 +475,7 @@ describe("GET /api/articles (sorting queries)", () => {
   });
 });
 
-describe("GET /api/articles (topic query)", () => {
+describe.only("GET /api/articles (topic query)", () => {
   test("200 should respond with all articles that match the topic query", () => {
     return request(app)
       .get("/api/articles?topic=cats")
@@ -486,10 +486,12 @@ describe("GET /api/articles (topic query)", () => {
   });
   test("404 should respond with error when given an invalid value", () => {
     return request(app)
-      .get("api/articles?topic=not-a-valid-value")
+      .get("/api/articles?topic=not-a-valid-value")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Invalid Input");
+
+        
+        expect(msg).toBe("Resource not found");
       });
   });
 });

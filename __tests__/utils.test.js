@@ -4,6 +4,15 @@ const {
   formatComments,
 } = require("../db/seeds/utils");
 
+const checkExists = require("../utils/utils");
+
+const db = require("../db/connection");
+const seed = require("../db/seeds/seed");
+const testData = require("../db/data/test-data/index");
+
+beforeEach(() => seed(testData));
+afterAll(() => db.end());
+
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
     const timestamp = 1557572706232;
@@ -100,5 +109,18 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe("checkExists", () => {
+  test("should respond positively when category exists", () => {
+    return checkExists("topics", "slug", "cats").then((result) => {
+      expect(result).toBe("Category Exists");
+    });
+  });
+  test("should return a rejected promise if category does not exist", () => {
+    return checkExists("topics", "slug", "does-not-exist").catch((result) => {
+      expect(result).toEqual({ status: 404, msg: "Category not found" });
+    });
   });
 });
