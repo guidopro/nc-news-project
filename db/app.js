@@ -44,6 +44,8 @@ app.use((err, req, res, next) => {
     res.status(404).send({ msg: "Article does not exist" });
   } else if (err.code === "23503" && err.detail.includes("author")) {
     res.status(404).send({ msg: "Username does not exist" });
+  } else if (err.status === 404 && err.msg === "Invalid Input") {
+    res.status(err.status).send({ msg: err.msg });
   } else next(err);
 });
 

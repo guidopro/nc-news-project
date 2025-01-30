@@ -21,18 +21,37 @@ function selectAllArticles(queries) {
   const sort_by = queries.sort_by;
   const order = queries.order;
 
-  const allowedInputs = [];
+  const allowedSortByInputs = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+  ];
+
+  const allowedOrderInputs = ["asc", "ASC", "desc", "DESC"];
 
   let SQLString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id
         GROUP BY articles.article_id`;
   let args = [];
 
+  if (!allowedSortByInputs.includes(sort_by) && sort_by !== undefined) {
+    return Promise.reject({ status: 404, msg: "Invalid Input" });
+  }
+
   if (sort_by) {
     SQLString += ` ORDER BY %I`;
     args.push(sort_by);
   } else {
     SQLString += ` ORDER BY articles.created_at`;
+  }
+
+  if (!allowedOrderInputs.includes(order) && order !== undefined) {
+    return Promise.reject({ status: 404, msg: "Invalid Input" });
   }
 
   if (order) {

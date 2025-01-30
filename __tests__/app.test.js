@@ -397,6 +397,58 @@ describe("CORE: GET /api/articles (sorting queries)", () => {
         expect(articles).toBeSortedBy("article_id", { descending: true });
       });
   });
+  test("should accept (title) column to sort by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+  test("should accept (topic) column to sort by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("topic", { descending: true });
+      });
+  });
+  test("should accept (author) column to sort by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("should accept (votes) column to sort by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  test("should accept (article_img_url) column to sort by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_img_url")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("article_img_url", { descending: true });
+      });
+  });
+  test("should accept (comment_count) column to sort by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("comment_count", {
+          coerce: true,
+          descending: true,
+        });
+      });
+  });
+
   test("should accept a sort_by and order query", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id&order=asc")
@@ -405,12 +457,20 @@ describe("CORE: GET /api/articles (sorting queries)", () => {
         expect(articles).toBeSortedBy("article_id", { ascending: true });
       });
   });
-  test.skip("404 should send error if column to sort_by does not exist", () => {
+  test("404 should send error if column to sort_by does not exist", () => {
     return request(app)
-      .get("/api/articles?sort_by=column-does-not-exist?order=asc")
+      .get("/api/articles?sort_by=column-does-not-exist&order=asc")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Column not found");
+        expect(response.body.msg).toBe("Invalid Input");
+      });
+  });
+  test("404 should send error if order query is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=not-a-valid-order")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid Input");
       });
   });
 });
