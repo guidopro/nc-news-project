@@ -10,7 +10,11 @@ function selectAllTopics() {
 
 function selectArticleById(id) {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [id])
+    .query(
+      `SELECT articles.body, articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
+        JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
+      [id]
+    )
     .then((result) => {
       if (result.rows.length === 0) {
         return Promise.reject("Article does not exist");
