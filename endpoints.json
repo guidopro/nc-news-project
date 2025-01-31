@@ -90,7 +90,7 @@
     "exampleResponse": "undefined"
   },
   "GET /api/users": {
-    "description": "serves an array of all articles",
+    "description": "serves an array of all users",
     "queries": [],
     "exampleResponse": [
       {
