@@ -9,7 +9,7 @@ const {
   getAllUsers,
 } = require("./controllers/controllers");
 const express = require("express");
-const endpointsJson = require("../endpoints.json");
+const endpointsJson = require("./endpoints.json");
 const app = express();
 
 app.use(express.json());

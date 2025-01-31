@@ -1,6 +1,6 @@
-const db = require("../connection");
+const db = require("../db/connection");
 const format = require("pg-format");
-const checkExists = require("../../utils/utils");
+const checkExists = require("../utils/utils");
 
 function selectAllTopics() {
   return db.query("SELECT * FROM topics").then((result) => {
