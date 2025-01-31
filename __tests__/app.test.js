@@ -365,7 +365,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
-describe("CORE: GET /api/users", () => {
+describe("GET /api/users", () => {
   test("should return an array of all users", () => {
     return request(app)
       .get("/api/users")
@@ -388,7 +388,7 @@ describe("CORE: GET /api/users", () => {
   });
 });
 
-describe("CORE: GET /api/articles (sorting queries)", () => {
+describe("GET /api/articles (sorting queries)", () => {
   test("should accept a sort_by query", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id")
@@ -471,6 +471,33 @@ describe("CORE: GET /api/articles (sorting queries)", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Invalid Input");
+      });
+  });
+});
+
+describe("GET /api/articles (topic query)", () => {
+  test("200 should respond with all articles that match the topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(1);
+      });
+  });
+  test("200 should respond with an empty array if topic exists but no rows exist with that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toEqual([]);
+      });
+  });
+  test("404 should respond with error when given an invalid value", () => {
+    return request(app)
+      .get("/api/articles?topic=not-a-valid-value")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Category not found");
       });
   });
 });
