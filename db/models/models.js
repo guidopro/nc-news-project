@@ -71,11 +71,12 @@ function selectAllArticles(queries) {
   const queryStr = format(SQLString, sort_by, order);
 
   return db.query(queryStr, args).then(async ({ rows }) => {
-    const validTopic = await checkExists("topics", "slug", topic);
-    if (!validTopic) {
-      return Promise.reject({ status: 404, msg: "Category not found" });
+    if (!rows.length) {
+      const validTopic = await checkExists("topics", "slug", topic);
+      if (!validTopic) {
+        return Promise.reject({ status: 404, msg: "Category not found" });
+      }
     }
-
     return rows;
   });
 }
