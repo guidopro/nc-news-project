@@ -6,8 +6,9 @@ const checkExists = async (table, column, value) => {
   const dbOutput = await db.query(queryStr, [value]);
   if (dbOutput.rows.length === 0) {
     // resource does NOT exist
-    return Promise.reject({ status: 404, msg: "Category not found" });
-  } else return "Category Exists";
+    return false;
+    // resource DOES exist
+  } else return true;
 };
 
 module.exports = checkExists;

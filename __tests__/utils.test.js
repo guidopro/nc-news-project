@@ -115,12 +115,13 @@ describe("formatComments", () => {
 describe("checkExists", () => {
   test("should respond positively when category exists", () => {
     return checkExists("topics", "slug", "cats").then((result) => {
-      expect(result).toBe("Category Exists");
+      expect(result).toBe(true);
     });
   });
+
   test("should return a rejected promise if category does not exist", () => {
-    return checkExists("topics", "slug", "does-not-exist").catch((result) => {
-      expect(result).toEqual({ status: 404, msg: "Category not found" });
+    return checkExists("topics", "slug", "does-not-exist").then((result) => {
+      expect(result).toBe(false);
     });
   });
 });

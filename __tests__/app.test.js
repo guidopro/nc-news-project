@@ -481,6 +481,8 @@ describe("GET /api/articles (topic query)", () => {
       .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body: { articles } }) => {
+        console.log(articles);
+
         expect(articles.length).toBe(1);
       });
   });

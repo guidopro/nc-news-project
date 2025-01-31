@@ -49,9 +49,15 @@ app.use((err, req, res, next) => {
   } else next(err);
 });
 
+// custom error & 500 error handler
+
 app.use((err, req, res, next) => {
-  console.log(err, "<------ err");
-  res.status(500).send({ msg: "Server Error!" });
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg });
+  } else {
+    console.log(err, "<------ err");
+    res.status(500).send({ msg: "Server Error!" });
+  }
 });
 
 module.exports = app;
