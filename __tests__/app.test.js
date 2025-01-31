@@ -83,6 +83,15 @@ describe("GET /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
+  test("An article response object should also now include a comment_count property", () => {
+    return request(app)
+      .get("/api/articles/9")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toHaveProperty("comment_count");
+        expect(article.comment_count).toBe("2");
+      });
+  });
 });
 
 describe("GET /api/articles", () => {
@@ -134,19 +143,12 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test("should return an array of comments for the given article_id ", () => {
+  test("should return an array of comments for the given article_id with properties: comment_id, votes, created_at, author, body and article_id ", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
         expect(comments.length).toBe(11);
-      });
-  });
-  test("each comment should have comment_id, votes, created_at, author, body and article_id properties", () => {
-    return request(app)
-      .get("/api/articles/1/comments")
-      .expect(200)
-      .then(({ body: { comments } }) => {
         comments.forEach((comment) => {
           expect(comment).toHaveProperty("comment_id");
           expect(comment).toHaveProperty("votes");
