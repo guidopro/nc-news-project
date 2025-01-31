@@ -494,3 +494,14 @@ describe("GET /api/articles (topic query)", () => {
       });
   });
 });
+
+describe.skip("GET /api/articles/:article_id (comment_count)", () => {
+  test("An article response object should also now include a comment_count property", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: article }) => {
+        expect(article).toHaveProperty("comment_count");
+      });
+  });
+});
