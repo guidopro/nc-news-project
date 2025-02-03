@@ -11,8 +11,11 @@ const {
 const express = require("express");
 const endpointsJson = require("./endpoints.json");
 const app = express();
+const apiRouter = require("./api-router");
 
 app.use(express.json());
+
+// app.use("/api", apiRouter);
 
 app.get("/api", (req, res) => {
   res.status(200).send({ endpoints: endpointsJson });

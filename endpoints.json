@@ -59,6 +59,10 @@
   "POST /api/articles/:article_id/comments": {
     "description": "posts comment by article id and responds with the posted comment",
     "queries": [],
+    "requestBodyFormat": {
+      "username": "lurker",
+      "body": "Tra la la la Tra la la la. Tra la la"
+    },
     "exampleResponse": {
       "article": {
         "comment_id": 19,
