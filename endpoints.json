@@ -77,6 +77,7 @@
   "PATCH /api/articles/:article_id": {
     "description": "patches vote property by article id and responds with the updated article",
     "queries": [],
+    "requestBodyFormat": { "inc_votes": 1 },
     "exampleResponse": {
       "article_id": 1,
       "title": "Living in the shadow of a great man",
