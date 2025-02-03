@@ -15,17 +15,17 @@ const apiRouter = require("./api-router");
 
 app.use(express.json());
 
-// app.use("/api", apiRouter);
+app.use("/api", apiRouter);
 
-app.get("/api", (req, res) => {
-  res.status(200).send({ endpoints: endpointsJson });
-});
+// app.get("/api", (req, res) => {
+//   res.status(200).send({ endpoints: endpointsJson });
+// });
 
 app.get("/api/topics", getAllTopics);
-app.get("/api/articles", getAllArticles);
-app.get("/api/articles/:article_id", getArticleById);
+// app.get("/api/articles", getAllArticles);
+// app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticle);
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+// app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.delete("/api/comments/:comment_id", deleteComment);
 app.get("/api/users", getAllUsers);
