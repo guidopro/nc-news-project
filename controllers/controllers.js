@@ -102,8 +102,6 @@ function getAllUsers(req, res, next) {
 
 function getUser(req, res, next) {
   const username = req.params.username;
-  console.log(username);
-
   selectUser(username)
     .then((user) => {
       return res.status(200).send({ user: user });
