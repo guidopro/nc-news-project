@@ -4,6 +4,7 @@ const {
   getAllTopics,
   deleteComment,
   getAllUsers,
+  getUser,
 } = require("./controllers/controllers");
 const endpointsJson = require("./endpoints.json");
 
@@ -16,5 +17,6 @@ apiRouter.get("/", (req, res) => {
 apiRouter.get("/topics", getAllTopics);
 apiRouter.delete("/comments/:comment_id", deleteComment);
 apiRouter.get("/users", getAllUsers);
+apiRouter.get("/users/:username", getUser);
 
 module.exports = apiRouter;
