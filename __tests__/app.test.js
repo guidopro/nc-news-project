@@ -544,3 +544,51 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200 should return an updated comment", () => {
+    return request(app)
+      .patch("/api/comments/5")
+      .send({ inc_votes: 7 })
+      .expect(200)
+      .then(({ body: { updatedComment } }) => {
+        expect(updatedComment.votes).toBe(7);
+      });
+  });
+  test("200 should increment votes when votes does not already equal zero", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 10 })
+      .expect(200)
+      .then(({ body: { updatedComment } }) => {
+        expect(updatedComment.votes).toBe(26);
+      });
+  });
+  test("400 sends an error message when given an invalid id", () => {
+    return request(app)
+      .patch("/api/comments/not-a-valid-id")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 sends an error message when given wrong data type ", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: ["100"] })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("404 should return an error if comment_id does not exist", () => {
+    return request(app)
+      .patch("/api/comments/9999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment not found");
+      });
+  });
+});
