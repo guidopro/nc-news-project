@@ -25,6 +25,8 @@ app.use((err, req, res, next) => {
     res.status(404).send({ msg: "Username does not exist" });
   } else if (err.status === 404 && err.msg === "Invalid Input") {
     res.status(err.status).send({ msg: err.msg });
+  } else if (err === "User not found") {
+    res.status(404).send({ msg: "User not found" });
   } else next(err);
 });
 

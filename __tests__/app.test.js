@@ -520,3 +520,27 @@ describe("GET /api/articles (topic query)", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  test("200 should return a user object with username, avatar_url & name properties", () => {
+    return request(app)
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user).toEqual({
+          username: "icellusedkars",
+          name: "sam",
+          avatar_url:
+            "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+        });
+      });
+  });
+  test("404 should return error when username does not exist", () => {
+    return request(app)
+      .get("/api/users/username-does-not-exist")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("User not found");
+      });
+  });
+});

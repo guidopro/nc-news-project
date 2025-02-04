@@ -7,6 +7,7 @@ const {
   patchArticleById,
   deleteCommentById,
   selectAllUsers,
+  selectUser,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -99,6 +100,17 @@ function getAllUsers(req, res, next) {
     });
 }
 
+function getUser(req, res, next) {
+  const username = req.params.username;
+  selectUser(username)
+    .then((user) => {
+      return res.status(200).send({ user: user });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
@@ -108,4 +120,5 @@ module.exports = {
   patchArticle,
   deleteComment,
   getAllUsers,
+  getUser,
 };

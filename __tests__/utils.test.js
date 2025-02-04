@@ -113,13 +113,13 @@ describe("formatComments", () => {
 });
 
 describe("checkExists", () => {
-  test("should respond positively when category exists", () => {
+  test("should respond true when category exists", () => {
     return checkExists("topics", "slug", "cats").then((result) => {
       expect(result).toBe(true);
     });
   });
 
-  test("should return a rejected promise if category does not exist", () => {
+  test("should return false if category does not exist", () => {
     return checkExists("topics", "slug", "does-not-exist").then((result) => {
       expect(result).toBe(false);
     });
