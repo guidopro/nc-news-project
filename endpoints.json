@@ -109,5 +109,27 @@
         "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
       }
     ]
+  },
+  "GET /api/users/:username": {
+    "description": "gets a user object given the user's username",
+    "queries": [],
+    "exampleResponse": {
+      "username": "icellusedkars",
+      "name": "sam",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the votes on a comment given the comment's comment_id.",
+    "queries": [],
+    "requestBodyFormat": { "inc_votes": 1 },
+    "exampleResponse": {
+      "comment_id": 5,
+      "body": "I hate streaming noses",
+      "article_id": 1,
+      "author": "icellusedkars",
+      "votes": 1,
+      "created_at": "2020-11-03T21:00:00.000Z"
+    }
   }
 }

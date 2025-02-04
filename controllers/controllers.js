@@ -8,6 +8,7 @@ const {
   deleteCommentById,
   selectAllUsers,
   selectUser,
+  patchCommentById,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -111,6 +112,18 @@ function getUser(req, res, next) {
     });
 }
 
+function patchComment(req, res, next) {
+  const comment_id = req.params.comment_id;
+  const newVote = req.body;
+  patchCommentById(comment_id, newVote)
+    .then((updatedComment) => {
+      return res.status(200).send({ updatedComment: updatedComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
@@ -121,4 +134,5 @@ module.exports = {
   deleteComment,
   getAllUsers,
   getUser,
+  patchComment,
 };
