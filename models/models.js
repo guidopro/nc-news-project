@@ -176,7 +176,10 @@ function patchCommentById(id, { inc_votes }) {
 
 function addNewArticle({ title, topic, author, body, article_img_url }) {
   if (!title || !topic || !author || !body) {
-    return Promise.reject("Missing data on request object");
+    return Promise.reject({
+      status: 400,
+      msg: "Missing data on request object",
+    });
   }
 
   let result;

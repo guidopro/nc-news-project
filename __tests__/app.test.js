@@ -665,4 +665,20 @@ describe("POST /api/articles", () => {
         expect(msg).toBe("Missing data on request object");
       });
   });
+  test("400 or 404? should return an error when author not found ", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "does not exist",
+        title: "seventh heaven",
+        body: "hello",
+        topic: "cats",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Username does not exist");
+      });
+  });
 });

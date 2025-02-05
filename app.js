@@ -14,8 +14,6 @@ app.use((err, req, res, next) => {
   // 400 errors
   if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ msg: "Bad request" });
-  } else if (err === "Missing data on request object") {
-    res.status(400).send({ msg: "Missing data on request object" });
   } else next(err);
 });
 
