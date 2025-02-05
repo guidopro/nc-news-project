@@ -11,12 +11,16 @@ app.all("*", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  // 400 errors
   if (err.code === "22P02" || err.code === "23502") {
     res.status(400).send({ msg: "Bad request" });
+  } else if (err === "Missing data on request object") {
+    res.status(400).send({ msg: "Missing data on request object" });
   } else next(err);
 });
 
 app.use((err, req, res, next) => {
+  // 404 errors
   if (err === "Article does not exist" || err.code === "22003") {
     res.status(404).send({ msg: "Article does not exist" });
   } else if (err.code === "23503" && err.detail.includes("article_id")) {

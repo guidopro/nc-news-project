@@ -621,4 +621,48 @@ describe("POST /api/articles", () => {
         );
       });
   });
+  test("201 should respond with a new article when article_img_url not given", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "rogersop",
+        title: "nibelheim",
+        body: "a small mountain village located at the base of Mt. Nibel",
+        topic: "mitch",
+      })
+      .expect(201)
+      .then(({ body: { newArticle } }) => {
+        expect(newArticle).toHaveProperty("article_id");
+        expect(newArticle).toHaveProperty("votes");
+        expect(newArticle).toHaveProperty("created_at");
+        expect(newArticle).toHaveProperty("comment_count");
+        expect(newArticle).toHaveProperty("author", "rogersop");
+        expect(newArticle).toHaveProperty("title", "nibelheim");
+        expect(newArticle).toHaveProperty(
+          "body",
+          "a small mountain village located at the base of Mt. Nibel"
+        );
+        expect(newArticle).toHaveProperty("topic", "mitch");
+        expect(newArticle).toHaveProperty(
+          "article_img_url",
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("400 should respond with an error if data is missing from request body", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "seventh heaven",
+        // missing body property
+        topic: "cats",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Missing data on request object");
+      });
+  });
 });

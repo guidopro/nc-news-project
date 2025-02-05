@@ -127,6 +127,7 @@ function patchComment(req, res, next) {
 
 function postArticle(req, res, next) {
   const articleRequest = req.body;
+
   addNewArticle(articleRequest)
     .then((newArticle) => {
       return res.status(201).send({ newArticle: newArticle });
