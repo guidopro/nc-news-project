@@ -9,6 +9,7 @@ const {
   selectAllUsers,
   selectUser,
   patchCommentById,
+  addNewArticle,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -124,6 +125,17 @@ function patchComment(req, res, next) {
     });
 }
 
+function postArticle(req, res, next) {
+  const articleRequest = req.body;
+  addNewArticle(articleRequest)
+    .then((newArticle) => {
+      return res.status(201).send({ newArticle: newArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
@@ -135,4 +147,5 @@ module.exports = {
   getAllUsers,
   getUser,
   patchComment,
+  postArticle,
 };

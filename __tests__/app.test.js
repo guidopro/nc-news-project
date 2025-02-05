@@ -592,3 +592,33 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("201 should respond with a newly added article as an object with the correct properties", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "seventh heaven",
+        body: "I miss sector 7 slums",
+        topic: "cats",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(201)
+      .then(({ body: { newArticle } }) => {
+        expect(newArticle).toHaveProperty("article_id");
+        expect(newArticle).toHaveProperty("votes");
+        expect(newArticle).toHaveProperty("created_at");
+        expect(newArticle).toHaveProperty("comment_count");
+        expect(newArticle).toHaveProperty("author", "icellusedkars");
+        expect(newArticle).toHaveProperty("title", "seventh heaven");
+        expect(newArticle).toHaveProperty("body", "I miss sector 7 slums");
+        expect(newArticle).toHaveProperty("topic", "cats");
+        expect(newArticle).toHaveProperty(
+          "article_img_url",
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+});
