@@ -133,8 +133,6 @@ function postArticle(req, res, next) {
       return res.status(201).send({ newArticle: newArticle });
     })
     .catch((err) => {
-      console.log(err);
-
       next(err);
     });
 }

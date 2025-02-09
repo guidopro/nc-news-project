@@ -665,7 +665,7 @@ describe("POST /api/articles", () => {
         expect(msg).toBe("Missing data on request object");
       });
   });
-  test("400 or 404? should return an error when author not found ", () => {
+  test("400 should return an error when author not found ", () => {
     return request(app)
       .post("/api/articles")
       .send({
