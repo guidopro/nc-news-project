@@ -27,8 +27,6 @@ function selectAllArticles(queries) {
   const order = queries.order;
   const topic = queries.topic;
 
-  const allowedTopicInputs = [];
-
   const allowedSortByInputs = [
     "article_id",
     "title",
@@ -176,6 +174,48 @@ function patchCommentById(id, { inc_votes }) {
     });
 }
 
+function addNewArticle({ title, topic, author, body, article_img_url }) {
+  if (!title || !topic || !author || !body) {
+    return Promise.reject({
+      status: 400,
+      msg: "Missing data on request object",
+    });
+  }
+
+  let result;
+  if (!article_img_url) {
+    result = db.query(
+      `INSERT INTO articles (title, topic, author, body)
+    VALUES ($1, $2, $3, $4) RETURNING article_id`,
+      [title, topic, author, body]
+    );
+  } else {
+    result = db.query(
+      `INSERT INTO articles (title, topic, author, body, article_img_url)
+    VALUES ($1, $2, $3, $4, $5) RETURNING article_id`,
+      [title, topic, author, body, article_img_url]
+    );
+  }
+
+  return result
+    .then(({ rows }) => {
+      if (!rows) {
+        return Promise.reject("Bad request");
+      }
+      const article_id = rows[0].article_id;
+      return db.query(
+        `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.body, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
+        LEFT JOIN comments ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id`,
+        [article_id]
+      );
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
 module.exports = {
   selectAllTopics,
   selectArticleById,
@@ -187,4 +227,5 @@ module.exports = {
   selectAllUsers,
   selectUser,
   patchCommentById,
+  addNewArticle,
 };
