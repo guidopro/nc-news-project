@@ -593,7 +593,7 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 
-describe.only("POST /api/articles", () => {
+describe("POST /api/articles", () => {
   test("201 should respond with a newly added article as an object with the correct properties", () => {
     return request(app)
       .post("/api/articles")
