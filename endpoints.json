@@ -21,7 +21,8 @@
           "body": "Text from the article..",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
-          "comment_count": 6
+          "comment_count": 6,
+          "article_img_url": "https://images.pexels.com/photos/2403392/pexels-photo-2403392.jpeg?w=700&h=700"
         }
       ]
     }
@@ -38,7 +39,8 @@
         "body": "I find this existence challenging",
         "created_at": "2020-07-09T20:11:00.000Z",
         "votes": 100,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count": "8"
       }
     }
   },
@@ -46,14 +48,24 @@
     "description": "gets comments by article id ordered from most recent",
     "queries": [],
     "exampleResponse": {
-      "article": {
-        "comment_id": 5,
-        "body": "I hate streaming noses",
-        "article_id": 1,
-        "author": "icellusedkars",
-        "votes": 0,
-        "created_at": "2020-11-03T21:00:00.000Z"
-      }
+      "comments": [
+        {
+          "comment_id": 5,
+          "body": "I hate streaming noses",
+          "article_id": 1,
+          "author": "icellusedkars",
+          "votes": 0,
+          "created_at": "2020-11-03T21:00:00.000Z"
+        },
+        {
+          "comment_id": 17,
+          "body": "I love streaming noses",
+          "article_id": 1,
+          "author": "lurker",
+          "votes": 0,
+          "created_at": "2021-07-03T21:00:00.000Z"
+        }
+      ]
     }
   },
   "POST /api/articles/:article_id/comments": {
@@ -64,7 +76,7 @@
       "body": "Tra la la la Tra la la la. Tra la la"
     },
     "exampleResponse": {
-      "article": {
+      "postedComment": {
         "comment_id": 19,
         "body": "Tra la la la Tra la la la. Tra la la",
         "article_id": 2,
@@ -79,14 +91,16 @@
     "queries": [],
     "requestBodyFormat": { "inc_votes": 1 },
     "exampleResponse": {
-      "article_id": 1,
-      "title": "Living in the shadow of a great man",
-      "topic": "mitch",
-      "author": "butter_bridge",
-      "body": "I find this existence challenging",
-      "created_at": "2020-07-09T20:11:00.000Z",
-      "votes": 253,
-      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      "updatedArticle": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 253,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
     }
   },
   "DELETE /api/comments/:comment_id": {
@@ -97,26 +111,30 @@
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
-    "exampleResponse": [
-      {
-        "username": "butter_bridge",
-        "name": "jonny",
-        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-      },
-      {
-        "username": "icellusedkars",
-        "name": "sam",
-        "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
-      }
-    ]
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        },
+        {
+          "username": "icellusedkars",
+          "name": "sam",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        }
+      ]
+    }
   },
   "GET /api/users/:username": {
     "description": "gets a user object given the user's username",
     "queries": [],
     "exampleResponse": {
-      "username": "icellusedkars",
-      "name": "sam",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+      "user": {
+        "username": "icellusedkars",
+        "name": "sam",
+        "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+      }
     }
   },
   "PATCH /api/comments/:comment_id": {
@@ -124,12 +142,25 @@
     "queries": [],
     "requestBodyFormat": { "inc_votes": 1 },
     "exampleResponse": {
-      "comment_id": 5,
-      "body": "I hate streaming noses",
-      "article_id": 1,
+      "updatedComment": {
+        "comment_id": 5,
+        "body": "I hate streaming noses",
+        "article_id": 1,
+        "author": "icellusedkars",
+        "votes": 1,
+        "created_at": "2020-11-03T21:00:00.000Z"
+      }
+    }
+  },
+  "POST /api/articles": {
+    "description": "adds a new article and responds with new article",
+    "queries": [],
+    "requestBodyFormat": {
       "author": "icellusedkars",
-      "votes": 1,
-      "created_at": "2020-11-03T21:00:00.000Z"
+      "title": "seventh heaven",
+      "body": "I miss sector 7 slums",
+      "topic": "cats",
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     }
   }
 }
