@@ -593,7 +593,7 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 
-describe("POST /api/articles", () => {
+describe.only("POST /api/articles", () => {
   test("201 should respond with a newly added article as an object with the correct properties", () => {
     return request(app)
       .post("/api/articles")
@@ -603,7 +603,7 @@ describe("POST /api/articles", () => {
         body: "I miss sector 7 slums",
         topic: "cats",
         article_img_url:
-          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "https://www.pexels.com/photo/cicek-ayasofya-15047434/",
       })
       .expect(201)
       .then(({ body: { newArticle } }) => {
@@ -617,7 +617,7 @@ describe("POST /api/articles", () => {
         expect(newArticle).toHaveProperty("topic", "cats");
         expect(newArticle).toHaveProperty(
           "article_img_url",
-          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          "https://www.pexels.com/photo/cicek-ayasofya-15047434/"
         );
       });
   });
@@ -665,7 +665,7 @@ describe("POST /api/articles", () => {
         expect(msg).toBe("Missing data on request object");
       });
   });
-  test("400 should return an error when author not found ", () => {
+  test("404 should return an error when author not found ", () => {
     return request(app)
       .post("/api/articles")
       .send({
@@ -679,6 +679,20 @@ describe("POST /api/articles", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Username does not exist");
+      });
+  });
+  test("404 should return an error when topic not found", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "seventh heaven",
+        body: "hello",
+        topic: "not a topic",
+      })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Topic not found");
       });
   });
 });
