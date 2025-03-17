@@ -730,4 +730,28 @@ describe("GET /api/articles (pagination)", () => {
         expect(articles.length).toBe(2);
       });
   });
+  test("200 should return an empty array when given page number bigger than results", () => {
+    return request(app)
+      .get("/api/articles?p=3")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toEqual([]);
+      });
+  });
+  test("400 should return error when given wrong data for limit", () => {
+    return request(app)
+      .get("/api/articles?limit=notanumber")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid input");
+      });
+  });
+  test("400 should return error when given wrong data for page", () => {
+    return request(app)
+      .get("/api/articles?p=notanumber")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid input");
+      });
+  });
 });

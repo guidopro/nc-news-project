@@ -40,6 +40,10 @@ async function selectAllArticles(
     "comment_count",
   ];
 
+  if (isNaN(limit)) {
+    return Promise.reject({ status: 400, msg: "Invalid input" });
+  }
+
   const allowedOrderInputs = ["asc", "ASC", "desc", "DESC"];
 
   let SQLString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
@@ -76,12 +80,16 @@ async function selectAllArticles(
       SQLString += ` ORDER BY ${sort_by} ${order}`;
 
       // limit is added to query
+
       if (limit) {
         SQLString += ` LIMIT ${limit}`;
       }
 
       // offset is added to query
       if (p) {
+        if (isNaN(p)) {
+          return Promise.reject({ status: 400, msg: "Invalid input" });
+        }
         const offset = Number(limit) * Number(p) - Number(limit);
         SQLString += ` OFFSET ${offset}`;
       }
