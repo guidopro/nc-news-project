@@ -453,8 +453,8 @@ describe("GET /api/articles (sorting queries)", () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toBeSortedBy("comment_count", {
-          coerce: true,
           descending: true,
+          coerce: true,
         });
       });
   });
@@ -464,7 +464,7 @@ describe("GET /api/articles (sorting queries)", () => {
       .get("/api/articles?sort_by=article_id&order=asc")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles).toBeSortedBy("article_id", { ascending: true });
+        expect(articles).toBeSortedBy("article_id");
       });
   });
 
@@ -472,7 +472,7 @@ describe("GET /api/articles (sorting queries)", () => {
     return request(app)
       .get("/api/articles?order=asc")
       .then(({ body: { articles } }) => {
-        expect(articles).toBeSortedBy("created_at", { ascending: true });
+        expect(articles).toBeSortedBy("created_at");
       });
   });
 
@@ -736,6 +736,17 @@ describe("GET /api/articles (pagination)", () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toEqual([]);
+      });
+  });
+  test("200 should be able to handle pagination with full query line", () => {
+    return request(app)
+      .get(
+        "/api/articles?topic=mitch&sort_by=article_id&order=desc&limit=5&p=2"
+      )
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy("article_id", { descending: true });
       });
   });
   test("400 should return error when given wrong data for limit", () => {
