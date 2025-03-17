@@ -35,11 +35,13 @@ function getArticleById(req, res, next) {
 }
 
 function getAllArticles(req, res, next) {
-  const queries = req.query;
+  const { sort_by, order, topic, p, limit } = req.query;
 
-  selectAllArticles(queries)
+  selectAllArticles(sort_by, order, topic, p, limit)
     .then((articles) => {
-      return res.status(200).send({ articles: articles });
+      return res
+        .status(200)
+        .send({ articles: articles.rows, total_count: articles.totalCount });
     })
     .catch((err) => {
       next(err);

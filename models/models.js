@@ -22,11 +22,13 @@ function selectArticleById(id) {
     });
 }
 
-function selectAllArticles(queries) {
-  const sort_by = queries.sort_by;
-  const order = queries.order;
-  const topic = queries.topic;
-
+async function selectAllArticles(
+  sort_by = "created_at",
+  order = "DESC",
+  topic,
+  p,
+  limit = 10
+) {
   const allowedSortByInputs = [
     "article_id",
     "title",
@@ -42,45 +44,52 @@ function selectAllArticles(queries) {
 
   let SQLString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id`;
-  let args = [];
+
+  let whereClause = "";
 
   if (topic) {
-    SQLString += ` WHERE topic = $1`;
-    args.push(topic);
+    const validTopic = await checkExists("topics", "slug", topic);
+    if (!validTopic) {
+      return Promise.reject({ status: 404, msg: "Category not found" });
+    }
+    SQLString += ` WHERE topic = '${topic}'`;
+    whereClause = ` WHERE topic = '${topic}'`;
   }
+
   SQLString += ` GROUP BY articles.article_id`;
 
-  if (!allowedSortByInputs.includes(sort_by) && sort_by !== undefined) {
-    return Promise.reject({ status: 404, msg: "Invalid Input" });
-  }
-
-  if (sort_by) {
-    SQLString += ` ORDER BY %I`;
-  } else {
-    SQLString += ` ORDER BY articles.created_at`;
-  }
-
-  if (!allowedOrderInputs.includes(order) && order !== undefined) {
-    return Promise.reject({ status: 404, msg: "Invalid Input" });
-  }
-
-  if (order) {
-    SQLString += ` %s`;
-  } else {
-    SQLString += ` DESC`;
-  }
-
-  const queryStr = format(SQLString, sort_by, order);
-
-  return db.query(queryStr, args).then(async ({ rows }) => {
-    if (!rows.length) {
-      const validTopic = await checkExists("topics", "slug", topic);
-      if (!validTopic) {
-        return Promise.reject({ status: 404, msg: "Category not found" });
+  // collects total count of articles before limit and offset constraints
+  let totalCount;
+  return db
+    .query(`SELECT * FROM articles ${whereClause}`)
+    .then(({ rows }) => {
+      totalCount = rows.length;
+    })
+    .then(() => {
+      if (!allowedSortByInputs.includes(sort_by) && sort_by !== undefined) {
+        return Promise.reject({ status: 404, msg: "Invalid Input" });
       }
-    }
-    return rows;
-  });
+
+      if (!allowedOrderInputs.includes(order) && order !== undefined) {
+        return Promise.reject({ status: 404, msg: "Invalid Input" });
+      }
+      SQLString += ` ORDER BY ${sort_by} ${order}`;
+
+      // limit is added to query
+      if (limit) {
+        SQLString += ` LIMIT ${limit}`;
+      }
+
+      // offset is added to query
+      if (p) {
+        const offset = Number(limit) * Number(p) - Number(limit);
+        SQLString += ` OFFSET ${offset}`;
+      }
+
+      return db.query(SQLString).then(async ({ rows }) => {
+        return { rows, totalCount };
+      });
+    });
 }
 
 function selectCommentsByArticleId(id) {
