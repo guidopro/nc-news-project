@@ -97,7 +97,7 @@ describe("GET /api/articles/:article_id", () => {
 describe("GET /api/articles", () => {
   test("should return all the articles from the db", () => {
     return request(app)
-      .get("/api/articles")
+      .get("/api/articles?limit=")
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles.length).toBe(13);
@@ -693,6 +693,41 @@ describe("POST /api/articles", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Topic not found");
+      });
+  });
+});
+
+describe("GET /api/articles (pagination)", () => {
+  test("200 should return only 10 articles", () => {
+    return request(app)
+      .get("/api/articles?limit=10")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(10);
+      });
+  });
+  test("200 should return only 10 articles by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(10);
+      });
+  });
+  test("200 should have total_count property, displaying the total number of articles discounting the limit", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&p=1&limit=10")
+      .expect(200)
+      .then(({ body: { total_count } }) => {
+        expect(total_count).toBe(12);
+      });
+  });
+  test("200 should display the remainder of articles on 2nd page", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&p=2&limit=10")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(2);
       });
   });
 });
