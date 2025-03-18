@@ -813,3 +813,33 @@ describe("GET /api/articles (pagination)", () => {
       });
   });
 });
+
+describe("POST /api/topics", () => {
+  test("201 Responds with a topic object containing the newly added topic.", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "test topic",
+        description: "description here",
+      })
+      .expect(201)
+      .then(({ body: { newTopic } }) => {
+        expect(newTopic).toEqual({
+          slug: "test topic",
+          description: "description here",
+        });
+      });
+  });
+  test("400 should respond with an error if request body missing correct properties", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        wrongSlug: "abcd",
+        wrongDescription: "efg",
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+});

@@ -10,6 +10,7 @@ const {
   selectUser,
   patchCommentById,
   addNewArticle,
+  addTopic,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -140,6 +141,17 @@ function postArticle(req, res, next) {
     });
 }
 
+function postTopic(req, res, next) {
+  const { slug, description } = req.body;
+  addTopic(slug, description)
+    .then((newTopic) => {
+      return res.status(201).send({ newTopic: newTopic });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
@@ -152,4 +164,5 @@ module.exports = {
   getUser,
   patchComment,
   postArticle,
+  postTopic,
 };
