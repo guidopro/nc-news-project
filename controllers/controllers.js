@@ -143,9 +143,13 @@ function postArticle(req, res, next) {
 
 function postTopic(req, res, next) {
   const { slug, description } = req.body;
-  addTopic(slug, description).then((newTopic) => {
-    return res.status(201).send({ newTopic: newTopic });
-  });
+  addTopic(slug, description)
+    .then((newTopic) => {
+      return res.status(201).send({ newTopic: newTopic });
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
 module.exports = {

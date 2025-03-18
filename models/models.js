@@ -246,6 +246,9 @@ function addNewArticle({ title, topic, author, body, article_img_url }) {
 }
 
 function addTopic(slug, description) {
+  if (!slug || !description) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
   return db
     .query(
       `INSERT INTO topics (slug, description)
