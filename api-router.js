@@ -6,6 +6,7 @@ const {
   getAllUsers,
   getUser,
   patchComment,
+  postTopic
 } = require("./controllers/controllers");
 const endpointsJson = require("./endpoints.json");
 
@@ -15,7 +16,7 @@ apiRouter.get("/", (req, res) => {
   res.status(200).send({ endpoints: endpointsJson });
 });
 
-apiRouter.get("/topics", getAllTopics);
+apiRouter.route("/topics").get(getAllTopics).post(postTopic)
 apiRouter.patch("/comments/:comment_id", patchComment);
 apiRouter.delete("/comments/:comment_id", deleteComment);
 apiRouter.get("/users", getAllUsers);
