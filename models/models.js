@@ -71,11 +71,11 @@ async function selectAllArticles(
     })
     .then(() => {
       if (!allowedSortByInputs.includes(sort_by) && sort_by !== undefined) {
-        return Promise.reject({ status: 404, msg: "Invalid Input" });
+        return Promise.reject({ status: 400, msg: "Bad request" });
       }
 
       if (!allowedOrderInputs.includes(order) && order !== undefined) {
-        return Promise.reject({ status: 404, msg: "Invalid Input" });
+        return Promise.reject({ status: 400, msg: "Bad request" });
       }
       SQLString += ` ORDER BY ${sort_by} ${order}`;
 
@@ -100,16 +100,28 @@ async function selectAllArticles(
     });
 }
 
-function selectCommentsByArticleId(id) {
-  return db
-    .query(
-      `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`,
-      [id]
-    )
-    .then((result) => {
-      if (result.rows.length === 0) {
-        return Promise.reject("Article does not exist");
-      } else return result.rows;
+function selectCommentsByArticleId(id, p, limit = 10) {
+  return checkExists("articles", "article_id", id)
+    .then((exists) => {
+      if (!exists)
+        return Promise.reject({ status: 404, msg: "Article does not exist" });
+    })
+    .then(() => {
+      let offset;
+      if (p) {
+        offset = Number(limit) * Number(p) - Number(limit);
+      }
+
+      return db
+        .query(
+          `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+          [id, limit, offset]
+        )
+        .then((result) => {
+          if (result.rows.length === 0) {
+            return Promise.reject({ status: 404, msg: "Comments not found" });
+          } else return result.rows;
+        });
     });
 }
 

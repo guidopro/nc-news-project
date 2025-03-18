@@ -50,7 +50,8 @@ function getAllArticles(req, res, next) {
 
 function getCommentsByArticleId(req, res, next) {
   const id = req.params.article_id;
-  selectCommentsByArticleId(id)
+  const { p, limit } = req.query;
+  selectCommentsByArticleId(id, p, limit)
     .then((comments) => {
       return res.status(200).send({ comments: comments });
     })

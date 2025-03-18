@@ -46,7 +46,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "gets comments by article id ordered from most recent",
-    "queries": [],
+    "queries": ["limit", "p"],
     "exampleResponse": {
       "comments": [
         {

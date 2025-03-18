@@ -20,7 +20,7 @@ describe("GET /api", () => {
 });
 
 describe("GET /api/topics", () => {
-  test("should respond with an array of topics, each with a slug and description property", () => {
+  test("200: should respond with an array of topics, each with a slug and description property", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -36,7 +36,7 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("should respond with requested article", () => {
+  test("200: should respond with requested article", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -67,23 +67,7 @@ describe("GET /api/articles/:article_id", () => {
         );
       });
   });
-  test("should respond with a status 404 when article id is not listed on the db", () => {
-    return request(app)
-      .get("/api/articles/9999")
-      .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe("Article does not exist");
-      });
-  });
-  test("responds with a status 400 when article_id is not a number", () => {
-    return request(app)
-      .get("/api/articles/not-a-number")
-      .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe("Bad request");
-      });
-  });
-  test("An article response object should also now include a comment_count property", () => {
+  test("200: An article response object should also now include a comment_count property", () => {
     return request(app)
       .get("/api/articles/9")
       .expect(200)
@@ -92,10 +76,26 @@ describe("GET /api/articles/:article_id", () => {
         expect(article.comment_count).toBe("2");
       });
   });
+  test("400: responds with a status 400 when article_id is not a number", () => {
+    return request(app)
+      .get("/api/articles/not-a-number")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("404: should respond with a status 404 when article id is not listed on the db", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Article does not exist");
+      });
+  });
 });
 
 describe("GET /api/articles", () => {
-  test("should return all the articles from the db", () => {
+  test("200: should return all the articles from the db", () => {
     return request(app)
       .get("/api/articles?limit=")
       .expect(200)
@@ -103,7 +103,7 @@ describe("GET /api/articles", () => {
         expect(articles.length).toBe(13);
       });
   });
-  test("objects should all have author, title, article_id, topic, created_at, votes, article_img_url, comment_count properties,", () => {
+  test("200: objects should all have author, title, article_id, topic, created_at, votes, article_img_url, comment_count properties,", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -120,7 +120,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("all objects should not have body property", () => {
+  test("200: all objects should not have body property", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -130,7 +130,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("should be sorted in descending order by date", () => {
+  test("200: should be sorted in descending order by date", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -143,12 +143,11 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test("should return an array of comments for the given article_id with properties: comment_id, votes, created_at, author, body and article_id ", () => {
+  test("200: should return an array of comments for the given article_id with properties: comment_id, votes, created_at, author, body and article_id ", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments.length).toBe(11);
         comments.forEach((comment) => {
           expect(comment).toHaveProperty("comment_id");
           expect(comment).toHaveProperty("votes");
@@ -159,7 +158,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("array should be sorted by most recent comments first", () => {
+  test("200 array should be sorted by most recent comments first", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -169,7 +168,31 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("responds with a status 400 when article_id is not a number", () => {
+  test("200 should be limited to no more than 10 by default", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(10);
+      });
+  });
+  test("200 should take a limit query (queries) ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(5);
+      });
+  });
+  test("200 should take an offset/p query (queries) ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=2")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(1);
+      });
+  });
+  test("400 responds with a status 400 when article_id is not a number", () => {
     return request(app)
       .get("/api/articles/not-a-number/comments")
       .expect(400)
@@ -177,12 +200,36 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
-  test("should respond with a status 404 when article id is not listed on the db", () => {
+  test("400 should respond with error when given invalid limit query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=notalimit")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("400 should respond with error when given invalid p query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=notapage")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("404 should respond with a status 404 when article id is not listed on the db", () => {
     return request(app)
       .get("/api/articles/4357953/comments")
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Article does not exist");
+      });
+  });
+  test("404 should respond with 404 if offset is a higher value than the existing data", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=3")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comments not found");
       });
   });
 });
@@ -260,7 +307,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("should update an article by article_id and respond with the updated article", () => {
+  test("200 should update an article by article_id and respond with the updated article", () => {
     return request(app)
       .patch("/api/articles/7")
       .send({ inc_votes: 1 })
@@ -280,7 +327,7 @@ describe("PATCH /api/articles/:article_id", () => {
         );
       });
   });
-  test("should increment votes when votes does not already equal zero", () => {
+  test("200 should increment votes when votes does not already equal zero", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: 153 })
@@ -289,7 +336,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(updatedArticle.votes).toBe(253);
       });
   });
-  test("should decrement votes when votes does not already equal zero", () => {
+  test("200 should decrement votes when votes does not already equal zero", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: -50 })
@@ -376,7 +423,7 @@ describe("DELETE /api/comments/:comment_id", () => {
 });
 
 describe("GET /api/users", () => {
-  test("should return an array of all users", () => {
+  test("200 should return an array of all users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -384,7 +431,7 @@ describe("GET /api/users", () => {
         expect(users.length).toBe(4);
       });
   });
-  test("objects in returned array should all have username, name & avatar_url properties", () => {
+  test("200 objects in returned array should all have username, name & avatar_url properties", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -476,20 +523,20 @@ describe("GET /api/articles (sorting queries)", () => {
       });
   });
 
-  test("404 should send error if column to sort_by does not exist", () => {
+  test("400 should send error if column to sort_by does not exist", () => {
     return request(app)
       .get("/api/articles?sort_by=column-does-not-exist&order=asc")
-      .expect(404)
+      .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("Invalid Input");
+        expect(response.body.msg).toBe("Bad request");
       });
   });
-  test("404 should send error if order query is invalid", () => {
+  test("400 should send error if order query is invalid", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id&order=not-a-valid-order")
-      .expect(404)
+      .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("Invalid Input");
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 });
@@ -730,14 +777,6 @@ describe("GET /api/articles (pagination)", () => {
         expect(articles.length).toBe(2);
       });
   });
-  test("200 should return an empty array when given page number bigger than results", () => {
-    return request(app)
-      .get("/api/articles?p=3")
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles).toEqual([]);
-      });
-  });
   test("200 should be able to handle pagination with full query line", () => {
     return request(app)
       .get(
@@ -747,6 +786,14 @@ describe("GET /api/articles (pagination)", () => {
       .then(({ body: { articles } }) => {
         expect(articles.length).toBe(5);
         expect(articles).toBeSortedBy("article_id", { descending: true });
+      });
+  });
+  test("200 should return emoty array when given page number bigger than results", () => {
+    return request(app)
+      .get("/api/articles?p=3")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toEqual([]);
       });
   });
   test("400 should return error when given wrong data for limit", () => {
