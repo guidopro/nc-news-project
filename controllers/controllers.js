@@ -11,6 +11,7 @@ const {
   patchCommentById,
   addNewArticle,
   addTopic,
+  removeArticleAndComments,
 } = require("../models/models");
 
 function getAllTopics(req, res, next) {
@@ -152,6 +153,17 @@ function postTopic(req, res, next) {
     });
 }
 
+function deleteArticle(req, res, next) {
+  const article_id = req.params.article_id;
+  removeArticleAndComments(article_id)
+    .then(() => {
+      return res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
 module.exports = {
   getAllTopics,
   getArticleById,
@@ -165,4 +177,5 @@ module.exports = {
   patchComment,
   postArticle,
   postTopic,
+  deleteArticle,
 };

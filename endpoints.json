@@ -57,6 +57,28 @@
       }
     }
   },
+  "PATCH /api/articles/:article_id": {
+    "description": "patches vote property by article id and responds with the updated article",
+    "queries": [],
+    "requestBodyFormat": { "inc_votes": 1 },
+    "exampleResponse": {
+      "updatedArticle": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 253,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
+    }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes article based on its id, and its respective comments",
+    "requestBodyFormat": "none",
+    "exampleResponse": "none"
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "gets comments by article id ordered from most recent",
     "queries": ["limit", "p"],
@@ -96,23 +118,6 @@
         "author": "lurker",
         "votes": 0,
         "created_at": "2025-01-29T09:38:15.822Z"
-      }
-    }
-  },
-  "PATCH /api/articles/:article_id": {
-    "description": "patches vote property by article id and responds with the updated article",
-    "queries": [],
-    "requestBodyFormat": { "inc_votes": 1 },
-    "exampleResponse": {
-      "updatedArticle": {
-        "article_id": 1,
-        "title": "Living in the shadow of a great man",
-        "topic": "mitch",
-        "author": "butter_bridge",
-        "body": "I find this existence challenging",
-        "created_at": "2020-07-09T20:11:00.000Z",
-        "votes": 253,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
     }
   },

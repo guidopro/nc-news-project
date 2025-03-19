@@ -843,3 +843,39 @@ describe("POST /api/topics", () => {
       });
   });
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+  test("204 should delete article and its respective comments", () => {
+    return request(app)
+      .delete("/api/articles/3")
+      .expect(204)
+      .then(() => {
+        return db
+          .query("SELECT * FROM comments WHERE article_id = 3")
+          .then(({ rows }) => {
+            expect(rows.length).toBe(0);
+            return db
+              .query("SELECT * FROM articles WHERE article_id = 3")
+              .then(({ rows }) => {
+                expect(rows.length).toBe(0);
+              });
+          });
+      });
+  });
+  test("400 responds with error message when given invalid id", () => {
+    return request(app)
+      .delete("/api/articles/not-a-valid-id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("404 responds with error message when given a non-existent id", () => {
+    return request(app)
+      .delete("/api/articles/1000")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Article does not exist");
+      });
+  });
+});
