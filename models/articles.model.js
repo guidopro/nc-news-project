@@ -1,17 +1,11 @@
 const db = require("../db/connection");
 const checkExists = require("../utils/utils");
 
-function selectAllTopics() {
-  return db.query("SELECT * FROM topics").then((result) => {
-    return result.rows;
-  });
-}
-
 function selectArticleById(id) {
   return db
     .query(
       `SELECT articles.body, articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles
-        LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
+          LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
       [id]
     )
     .then((result) => {
@@ -46,7 +40,7 @@ async function selectAllArticles(
   const allowedOrderInputs = ["asc", "ASC", "desc", "DESC"];
 
   let SQLString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
-        LEFT JOIN comments ON articles.article_id = comments.article_id`;
+          LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
   let whereClause = "";
 
@@ -154,54 +148,6 @@ function patchArticleById(id, { inc_votes }) {
     });
 }
 
-function deleteCommentById(commentId) {
-  return db
-    .query(
-      `DELETE FROM comments
-        WHERE comment_id = $1`,
-      [commentId]
-    )
-    .then(({ rowCount }) => {
-      if (!rowCount) {
-        return Promise.reject("Article does not exist");
-      }
-    });
-}
-
-function selectAllUsers() {
-  return db.query(`SELECT * from users`).then(({ rows }) => {
-    return rows;
-  });
-}
-
-function selectUser(username) {
-  return db
-    .query(`SELECT * FROM users WHERE username = $1`, [username])
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject("User not found");
-      }
-      return rows[0];
-    });
-}
-
-function patchCommentById(id, { inc_votes }) {
-  return db
-    .query(
-      `UPDATE comments
-        SET votes = votes + $1
-        WHERE comment_id = $2
-        RETURNING *`,
-      [inc_votes, id]
-    )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject("Comment not found");
-      }
-      return rows[0];
-    });
-}
-
 function addNewArticle({ title, topic, author, body, article_img_url }) {
   if (!title || !topic || !author || !body) {
     return Promise.reject({
@@ -214,13 +160,13 @@ function addNewArticle({ title, topic, author, body, article_img_url }) {
   if (!article_img_url) {
     result = db.query(
       `INSERT INTO articles (title, topic, author, body)
-    VALUES ($1, $2, $3, $4) RETURNING article_id`,
+      VALUES ($1, $2, $3, $4) RETURNING article_id`,
       [title, topic, author, body]
     );
   } else {
     result = db.query(
       `INSERT INTO articles (title, topic, author, body, article_img_url)
-    VALUES ($1, $2, $3, $4, $5) RETURNING article_id`,
+      VALUES ($1, $2, $3, $4, $5) RETURNING article_id`,
       [title, topic, author, body, article_img_url]
     );
   }
@@ -233,27 +179,12 @@ function addNewArticle({ title, topic, author, body, article_img_url }) {
       const article_id = rows[0].article_id;
       return db.query(
         `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.body, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles
-        LEFT JOIN comments ON articles.article_id = comments.article_id
-        WHERE articles.article_id = $1
-        GROUP BY articles.article_id`,
+          LEFT JOIN comments ON articles.article_id = comments.article_id
+          WHERE articles.article_id = $1
+          GROUP BY articles.article_id`,
         [article_id]
       );
     })
-    .then(({ rows }) => {
-      return rows[0];
-    });
-}
-
-function addTopic(slug, description) {
-  if (!slug || !description) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-  return db
-    .query(
-      `INSERT INTO topics (slug, description)
-    VALUES ($1, $2) RETURNING *`,
-      [slug, description]
-    )
     .then(({ rows }) => {
       return rows[0];
     });
@@ -278,17 +209,11 @@ function removeArticleAndComments(article_id) {
 }
 
 module.exports = {
-  selectAllTopics,
   selectArticleById,
   selectAllArticles,
   selectCommentsByArticleId,
   insertIntoCommentsByArticleId,
   patchArticleById,
-  deleteCommentById,
-  selectAllUsers,
-  selectUser,
-  patchCommentById,
   addNewArticle,
-  addTopic,
   removeArticleAndComments,
 };

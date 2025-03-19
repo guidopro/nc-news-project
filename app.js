@@ -1,9 +1,9 @@
 const cors = require("cors");
 const express = require("express");
-
 const app = express();
+const { badRequest, miscErrors, custErrors } = require("./error-handling");
+const apiRouter = require("./routes/api-router");
 app.use(cors());
-const apiRouter = require("./api-router");
 
 app.use(express.json());
 
@@ -13,41 +13,9 @@ app.all("*", (req, res) => {
   res.status(404).send({ msg: "Endpoint not found" });
 });
 
-app.use((err, req, res, next) => {
-  // 400 errors
-  if (err.code === "22P02" || err.code === "23502") {
-    res.status(400).send({ msg: "Bad request" });
-  } else next(err);
-});
-
-app.use((err, req, res, next) => {
-  // 404 errors
-  if (err === "Article does not exist" || err.code === "22003") {
-    res.status(404).send({ msg: "Article does not exist" });
-  } else if (err.code === "23503" && err.detail.includes("article_id")) {
-    res.status(404).send({ msg: "Article does not exist" });
-  } else if (err.code === "23503" && err.detail.includes("author")) {
-    res.status(404).send({ msg: "Username does not exist" });
-  } else if (err.status === 404 && err.msg === "Invalid Input") {
-    res.status(err.status).send({ msg: err.msg });
-  } else if (err === "User not found") {
-    res.status(404).send({ msg: "User not found" });
-  } else if (err === "Comment not found") {
-    res.status(404).send({ msg: "Comment not found" });
-  } else if (err.code === "23503" && err.detail.includes("topic")) {
-    res.status(404).send({ msg: "Topic not found" });
-  } else next(err);
-});
-
-// custom error & 500 error handler
-
-app.use((err, req, res, next) => {
-  if (err.status && err.msg) {
-    res.status(err.status).send({ msg: err.msg });
-  } else {
-    console.log(err, "<------ err");
-    res.status(500).send({ msg: "Server Error!" });
-  }
-});
+// error handling
+app.use(badRequest);
+app.use(miscErrors);
+app.use(custErrors);
 
 module.exports = app;
