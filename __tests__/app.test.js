@@ -853,12 +853,10 @@ describe("DELETE /api/articles/:article_id", () => {
         return db
           .query("SELECT * FROM comments WHERE article_id = 3")
           .then(({ rows }) => {
-            console.log(rows, "comments");
             expect(rows.length).toBe(0);
             return db
               .query("SELECT * FROM articles WHERE article_id = 3")
               .then(({ rows }) => {
-                console.log(rows, "articles");
                 expect(rows.length).toBe(0);
               });
           });
