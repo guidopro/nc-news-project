@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const format = require("pg-format");
 const checkExists = require("../utils/utils");
 
 function selectAllTopics() {
@@ -260,6 +259,24 @@ function addTopic(slug, description) {
     });
 }
 
+function removeArticleAndComments(article_id) {
+  return checkExists("articles", "article_id", article_id)
+    .then((exists) => {
+      if (!exists) {
+        return Promise.reject({ status: 404, msg: "Article does not exist" });
+      }
+    })
+    .then(() => {
+      return db
+        .query(`DELETE FROM comments WHERE article_id = $1`, [article_id])
+        .then(() => {
+          return db.query(`DELETE FROM articles WHERE article_id = $1`, [
+            article_id,
+          ]);
+        });
+    });
+}
+
 module.exports = {
   selectAllTopics,
   selectArticleById,
@@ -273,4 +290,5 @@ module.exports = {
   patchCommentById,
   addNewArticle,
   addTopic,
+  removeArticleAndComments,
 };
