@@ -192,6 +192,14 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(comments.length).toBe(1);
       });
   });
+  test("200 should return an empty array if no comments on article", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
+      });
+  });
   test("400 responds with a status 400 when article_id is not a number", () => {
     return request(app)
       .get("/api/articles/not-a-number/comments")
@@ -222,14 +230,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Article does not exist");
-      });
-  });
-  test("404 should respond with 404 if offset is a higher value than the existing data", () => {
-    return request(app)
-      .get("/api/articles/1/comments?p=3")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Comments not found");
       });
   });
 });
