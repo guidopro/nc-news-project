@@ -111,9 +111,7 @@ function selectCommentsByArticleId(id, p, limit = 10) {
           [id, limit, offset]
         )
         .then((result) => {
-          if (result.rows.length === 0) {
-            return Promise.reject({ status: 404, msg: "Comments not found" });
-          } else return result.rows;
+          return result.rows;
         });
     });
 }
