@@ -9,7 +9,7 @@ Into each, add PGDATABASE=, with the correct database name for that environment 
 
 In the package.JSON there are some scripts that can be run that you may find useful.
 
-** If you would like to visit the hosted version of this repo you can do so here: https://guys-app.onrender.com/api **
+** If you would like to visit the hosted version of this repo you can do so here: https://nc-news-api-frankfurt.onrender.com/api **
 
 This project simulates a production-grade backend service designed to interact seamlessly with front-end architectures, similar to those found in social media platforms and forum-style websites.
 
